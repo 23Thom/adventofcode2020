@@ -6,7 +6,6 @@ const bagRules = fs.readFileSync('day7Input.txt', {encoding: 'utf-8'}).split('.\
 
 function hasGoldBag (bagColor) {
 const bagRule = bagRules.find((bagRule) => bagRule.startsWith(bagColor));
-
 if(bagRule.endsWith('no other bags')){
     return false;
 }
@@ -28,3 +27,25 @@ const bagsHoldShiny = bagRules.filter((bagRule) => {
   });
 
   console.log('part 1 ' + bagsHoldShiny.length);
+
+
+//part 2
+
+function traverseBagRulesForPart2(bagColor){
+    const bagRule = bagRules.find((bagRule) => bagRule.startsWith(bagColor));
+    if (bagRule.endsWith('no other bags')) {
+      return 0;
+    }
+  
+    const [, childrenBag] = bagRule.split(' bags contain ');
+    const childrenBagSpecifications = childrenBag.split(', ');
+  
+    return childrenBagSpecifications.reduce((sumOfBags, childBagSpecification) => {
+      const [, noOfBags, childBagColor] = childBagSpecification.match(/(^\d) (\w.*?) bag|bags$/);
+      return sumOfBags + Number(noOfBags) + Number(noOfBags) * traverseBagRulesForPart2(childBagColor);
+    }, 0);
+
+
+}
+
+console.log('part 2 : ' + traverseBagRulesForPart2('shiny gold'));
